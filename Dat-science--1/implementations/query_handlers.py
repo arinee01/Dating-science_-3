@@ -324,12 +324,13 @@ class JournalQueryHandler(QueryHandler):
     
 
     # =========================================================================
-    # ОБЩИЙ МЕТОД - КАТЮХА
+    # General method - Ekaterina
     # =========================================================================
+    
     def _execute_sparql_query(self, sparql_query: str) -> pd.DataFrame:
-        """
-        Execute SPARQL query and return result as DataFrame.
-        """
+
+        #Execute SPARQL query and return result as DataFrame.
+      
         try:
             response = requests.get(
                 self._dbPathOrUrl,
@@ -344,7 +345,7 @@ class JournalQueryHandler(QueryHandler):
                 if not bindings:
                     return pd.DataFrame()
 
-                # Простое преобразование в DataFrame
+                # Transformation to dataframe
                 rows = []
                 for binding in bindings:
                     row = {}
