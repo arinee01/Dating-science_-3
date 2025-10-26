@@ -396,7 +396,7 @@ class CategoryQueryHandler(QueryHandler):
             return df
 
     # Return all areas from the database
-    # (pd.DataFrame: DataFrame with all areas)
+    
     def getAllAreas(self) -> pd.DataFrame:
         
         with connect(self._dbPathOrUrl) as conn:
