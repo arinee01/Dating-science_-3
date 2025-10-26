@@ -187,11 +187,11 @@ class JournalQueryHandler(QueryHandler):
             return pd.DataFrame()
 
     # =========================================================================
-    # 🔵 ЗОНА ОТВЕТСТВЕННОСТИ DEVELOPER B - ФИЛЬТРЫ ЖУРНАЛОВ
+    # part of Arina S.
     # =========================================================================
     
     #Return journals with specified licenses
-    # (pd.DataFrame: DataFrame with found journals)
+    
     def getJournalsWithLicense(self, licenses: Set[str]) -> pd.DataFrame:
 
         if not licenses:
@@ -233,7 +233,7 @@ class JournalQueryHandler(QueryHandler):
             
 
     #Return journals that have Article Processing Charge (APC)
-    # (pd.DataFrame: DataFrame with journals that have APC)
+
     def getJournalsWithAPC(self) -> pd.DataFrame:
         
         sparql_query = """
@@ -261,7 +261,6 @@ class JournalQueryHandler(QueryHandler):
 
 
     # Return journals that have DOAJ Seal
-    # (pd.DataFrame: DataFrame with journals that have DOAJ Seal)
 
     def getJournalsWithDOAJSeal(self) -> pd.DataFrame:
         
@@ -364,7 +363,7 @@ class JournalQueryHandler(QueryHandler):
 
 
 # =============================================================================
-# 🔵 ЗОНА ОТВЕТСТВЕННОСТИ DEVELOPER B - ВЕСЬ КЛАСС CATEGORYQUERYHANDLER
+#  part of Arina S.
 # =============================================================================
 
 # Handler for categories and areas queries in a relational SQLite database
@@ -387,7 +386,7 @@ class CategoryQueryHandler(QueryHandler):
 
         
     # Return all categories from the database 
-    # (pd.DataFrame: DataFrame with all categories)
+    
     def getAllCategories(self) -> pd.DataFrame:
         
         with connect(self._dbPathOrUrl) as conn:
@@ -408,7 +407,7 @@ class CategoryQueryHandler(QueryHandler):
 
 
     # Return categories with specified quartiles
-    # (pd.DataFrame: DataFrame with found categories)
+    
     def getCategoriesWithQuartile(self, quartiles: Set[str]) -> pd.DataFrame:
       
         with connect(self._dbPathOrUrl) as conn:
@@ -427,7 +426,7 @@ class CategoryQueryHandler(QueryHandler):
 
 
     # Return categories assigned to specified areas
-    # (pd.DataFrame: DataFrame with found categories)
+    
     def getCategoriesAssignedToAreas(self, area_ids: Set[str]) -> pd.DataFrame:
         
         with connect(self._dbPathOrUrl) as conn:
@@ -456,7 +455,6 @@ class CategoryQueryHandler(QueryHandler):
             return df
 
     # Return areas assigned to specified categories
-    # (pd.DataFrame: DataFrame with found areas)
 
     def getAreasAssignedToCategories(self, category_ids: Set[str]) -> pd.DataFrame:
         
