@@ -14,29 +14,23 @@ from .models import Journal, Category, Area
 
 
 # =========================================================================
-# ЗОНА ОТВЕТСТВЕННОСТИ КАТЮХИ - БАЗОВЫЕ МЕТОДЫ И УТИЛИТЫ
+# Ekaterina's part
 # =========================================================================
-class JournalQueryHandler(QueryHandler):
-    """
-    Simplified handler for journal queries against a Blazegraph graph database.
-    """
+
+class JournalQueryHandler(QueryHandler):   
 
     def _escape_literal(self, value: str) -> str:
-        """
-        Simple escape for SPARQL queries.
-        """
+
         if value is None:
             return ""
-        # Просто экранируем кавычки и обратные слеши
+            
         return value.replace("\\", "\\\\").replace('"', '\\"')
 
     def getById(self, entity_id: str) -> pd.DataFrame:
-        """
-        Return a journal by identifier (ISSN or eISSN).
-        """
+
         try:
             escaped_id = self._escape_literal(entity_id)
-            sparql_query = f"""
+            sparql_query = f'''
             PREFIX doaj: <http://doaj.org/>
             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
             
@@ -53,7 +47,7 @@ class JournalQueryHandler(QueryHandler):
                 OPTIONAL {{ ?journal doaj:licence ?licence }}
                 OPTIONAL {{ ?journal doaj:hasAPC ?apc }}
             }}
-            """
+            '''
 
             return self._execute_sparql_query(sparql_query)
 
@@ -62,14 +56,11 @@ class JournalQueryHandler(QueryHandler):
             return pd.DataFrame()
 
     def getByIds(self, ids: List[str]) -> pd.DataFrame:
-        """
-        Return journals by multiple identifiers.
-        """
+
         if not ids:
             return pd.DataFrame()
 
         try:
-            # Простой способ создать VALUES clause
             values_list = []
             for journal_id in ids:
                 if journal_id:
@@ -81,7 +72,7 @@ class JournalQueryHandler(QueryHandler):
 
             values_string = " ".join(values_list)
 
-            sparql_query = f"""
+            sparql_query = f'''
             PREFIX doaj: <http://doaj.org/>
             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
             
@@ -99,7 +90,7 @@ class JournalQueryHandler(QueryHandler):
                 OPTIONAL {{ ?journal doaj:licence ?licence }}
                 OPTIONAL {{ ?journal doaj:hasAPC ?apc }}
             }}
-            """
+            '''
 
             return self._execute_sparql_query(sparql_query)
 
@@ -108,11 +99,9 @@ class JournalQueryHandler(QueryHandler):
             return pd.DataFrame()
 
     def getAllJournals(self) -> pd.DataFrame:
-        """
-        Return all journals from the database.
-        """
+ 
         try:
-            sparql_query = """
+            sparql_query = '''
             PREFIX doaj: <http://doaj.org/>
             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
             
@@ -129,7 +118,7 @@ class JournalQueryHandler(QueryHandler):
                 OPTIONAL { ?journal doaj:hasAPC ?apc }
             }
             ORDER BY ?title
-            """
+            '''
 
             return self._execute_sparql_query(sparql_query)
 
@@ -138,12 +127,10 @@ class JournalQueryHandler(QueryHandler):
             return pd.DataFrame()
 
     def getJournalsWithTitle(self, partialTitle: str) -> pd.DataFrame:
-        """
-        Return journals with partial title match.
-        """
+
         try:
             escaped_title = self._escape_literal(partialTitle)
-            sparql_query = f"""
+            sparql_query = f'''
             PREFIX doaj: <http://doaj.org/>
             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
             
@@ -161,8 +148,8 @@ class JournalQueryHandler(QueryHandler):
                 OPTIONAL {{ ?journal doaj:hasAPC ?apc }}
             }}
             ORDER BY ?title
-            """
-
+            '''
+            
             return self._execute_sparql_query(sparql_query)
 
         except Exception as e:
@@ -170,12 +157,10 @@ class JournalQueryHandler(QueryHandler):
             return pd.DataFrame()
 
     def getJournalsPublishedBy(self, partialName: str) -> pd.DataFrame:
-        """
-        Return journals with partial publisher name match.
-        """
+
         try:
             escaped_name = self._escape_literal(partialName)
-            sparql_query = f"""
+            sparql_query = f'''
             PREFIX doaj: <http://doaj.org/>
             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
             
@@ -193,7 +178,7 @@ class JournalQueryHandler(QueryHandler):
                 OPTIONAL {{ ?journal doaj:hasAPC ?apc }}
             }}
             ORDER BY ?title
-            """
+            '''
 
             return self._execute_sparql_query(sparql_query)
 
