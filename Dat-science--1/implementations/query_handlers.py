@@ -328,7 +328,7 @@ class JournalQueryHandler(QueryHandler):
     
     def _execute_sparql_query(self, sparql_query: str) -> pd.DataFrame:
 
-        #Execute SPARQL query and return result as DataFrame.
+        #Execute SPARQL query using direct HTTP request. Alternative to sparql_dataframe library for more control.
       
         try:
             response = requests.get(
