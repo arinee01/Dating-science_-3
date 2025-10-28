@@ -57,9 +57,6 @@ class JournalQueryHandler(QueryHandler):
 
     def getByIds(self, ids: List[str]) -> pd.DataFrame:
 
-        if not ids:
-            return pd.DataFrame()
-
         try:
             values_list = []
             for journal_id in ids:
