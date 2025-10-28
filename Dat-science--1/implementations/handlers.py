@@ -15,7 +15,7 @@ class Handler:
     
     def __init__(
         self, dbPathOrUrl: str = ""
-    ):  # ДОБАВЛЯЕМ ПАРАМЕТР ДЛЯ ТЕСТОВ И ТД И ЧТОБЫ ЛЕГЧЕ ВЫЗЫВАТЬ БД ЧЕРЕЗ handler = JournalQueryHandler("http://example.com/sparql")
+    ):  
         self._dbPathOrUrl: str = dbPathOrUrl
 
     
