@@ -79,6 +79,6 @@ class QueryHandler(Handler):
         Returns:
             DataFrame: Entity data or an empty DataFrame
         """
-        # Default implementation - should be overridden in subclasses
+       
         from pandas import DataFrame
         return DataFrame()
