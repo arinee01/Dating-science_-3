@@ -94,7 +94,10 @@ class BasicQueryEngine:
             for handler in self._journalQuery:
                 df = handler.getById(entity_id)
                 if not df.empty:
-                    return self._dataframe_to_journal(df.iloc[0])
+                    journal_map = {}
+                    self._collect_journals(df, journal_map)
+                    if journal_map:
+                        return list(journal_map.values())[0]
             
             # Search in categories
             for handler in self._categoryQuery:

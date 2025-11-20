@@ -105,7 +105,7 @@ class JournalQueryHandler(QueryHandler):
             SELECT ?journal ?title ?issn ?eissn ?language ?publisher ?seal ?licence ?apc
             WHERE {
                 ?journal rdf:type doaj:Journal .
-                ?journal doaj:title ?title .
+                OPTIONAL { ?journal doaj:title ?title }
                 OPTIONAL { ?journal doaj:issn ?issn }
                 OPTIONAL { ?journal doaj:eissn ?eissn }
                 OPTIONAL { ?journal doaj:language ?language }
@@ -164,7 +164,7 @@ class JournalQueryHandler(QueryHandler):
             SELECT ?journal ?title ?issn ?eissn ?language ?publisher ?seal ?licence ?apc
             WHERE {{
                 ?journal rdf:type doaj:Journal .
-                ?journal doaj:title ?title .
+                OPTIONAL {{ ?journal doaj:title ?title }}
                 ?journal doaj:publisher ?publisher .
                 FILTER (CONTAINS(LCASE(?publisher), LCASE("{escaped_name}")))
                 OPTIONAL {{ ?journal doaj:issn ?issn }}
@@ -213,7 +213,7 @@ class JournalQueryHandler(QueryHandler):
         SELECT ?journal ?title ?issn ?eissn ?language ?publisher ?seal ?licence ?apc
         WHERE {{
             ?journal rdf:type doaj:Journal .
-            ?journal doaj:title ?title .
+            OPTIONAL {{ ?journal doaj:title ?title }}
             ?journal doaj:licence ?licence .
             FILTER ({license_filter})
             OPTIONAL {{ ?journal doaj:issn ?issn }}
@@ -241,8 +241,9 @@ class JournalQueryHandler(QueryHandler):
         SELECT ?journal ?title ?issn ?eissn ?language ?publisher ?seal ?licence ?apc
         WHERE {
             ?journal rdf:type doaj:Journal .
-            ?journal doaj:title ?title .
-            ?journal doaj:hasAPC "true"^^xsd:boolean .
+            OPTIONAL { ?journal doaj:title ?title }
+            ?journal doaj:hasAPC ?apc .
+            FILTER(LCASE(STR(?apc)) = "true")
             OPTIONAL { ?journal doaj:issn ?issn }
             OPTIONAL { ?journal doaj:eissn ?eissn }
             OPTIONAL { ?journal doaj:language ?language }
@@ -269,8 +270,9 @@ class JournalQueryHandler(QueryHandler):
         SELECT ?journal ?title ?issn ?eissn ?language ?publisher ?seal ?licence ?apc
         WHERE {
             ?journal rdf:type doaj:Journal .
-            ?journal doaj:title ?title .
-            ?journal doaj:hasDOAJSeal "true"^^xsd:boolean .
+            OPTIONAL { ?journal doaj:title ?title }
+            ?journal doaj:hasDOAJSeal ?seal .
+            FILTER(LCASE(STR(?seal)) = "true")
             OPTIONAL { ?journal doaj:issn ?issn }
             OPTIONAL { ?journal doaj:eissn ?eissn }
             OPTIONAL { ?journal doaj:language ?language }
@@ -295,6 +297,10 @@ class JournalQueryHandler(QueryHandler):
             f'"{self._escape_literal(issn)}"' for issn in sorted(cleaned_ids)
         )
         
+        comma_separated = ", ".join(
+            f'"{self._escape_literal(issn)}"' for issn in sorted(cleaned_ids)
+        )
+        
         sparql_query = f"""
         PREFIX doaj: <http://doaj.org/>
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -303,7 +309,7 @@ class JournalQueryHandler(QueryHandler):
         WHERE {{
             VALUES ?targetId {{ {values_clause} }}
             ?journal rdf:type doaj:Journal .
-            ?journal doaj:title ?title .
+            OPTIONAL {{ ?journal doaj:title ?title }}
             OPTIONAL {{ ?journal doaj:issn ?issn }}
             OPTIONAL {{ ?journal doaj:eissn ?eissn }}
             OPTIONAL {{ ?journal doaj:language ?language }}
@@ -312,7 +318,7 @@ class JournalQueryHandler(QueryHandler):
             OPTIONAL {{ ?journal doaj:licence ?licence }}
             OPTIONAL {{ ?journal doaj:hasAPC ?apc }}
             BIND(COALESCE(?issn, ?eissn) AS ?anyId)
-            FILTER (?anyId IN ({values_clause}))
+            FILTER (?anyId IN ({comma_separated}))
         }}
         ORDER BY ?title
         """
