@@ -430,6 +430,12 @@ class BasicQueryEngine:
 
     def _update_journal_from_row(self, journal: Journal, row) -> None:
         """Merge row data into an existing journal instance."""
+        # ensure we keep all identifiers (uri, issn, eissn)
+        for field in ('journal', 'issn', 'eissn'):
+            value = row.get(field)
+            if self._has_value(value):
+                journal.addId(str(value).strip())
+
         if self._has_value(row.get('title')) and not journal.getTitle():
             journal.setTitle(str(row.get('title')).strip())
 
@@ -489,35 +495,51 @@ class BasicQueryEngine:
         try:
             journal = Journal()
             
-            # Set identifier (ISSN)
-            issn = row.get('issn') if 'issn' in row else None
-            if not self._has_value(issn):
-                issn = row.get('eissn') if 'eissn' in row else None
+            # ---- ADD ALL IDENTIFIERS ----
+            issn = row.get("issn")
+            eissn = row.get("eissn")
+            uri = row.get("journal")
+            if uri:
+                journal.setId(uri)
+            elif issn:
+                journal.setId(issn)
+            elif eissn:
+                journal.setId(eissn)
+            
+            # 1. Add URI as ID
+            if self._has_value(uri):
+                journal.addId(str(uri).strip())
+            
+            # 2. Add ISSN
             if self._has_value(issn):
-                journal.setId(str(issn).strip())
+                journal.addId(str(issn).strip())
             
-            # Set other fields
-            title_value = row.get('title')
+            # 3. Add EISSN 
+            if self._has_value(eissn):
+                journal.addId(str(eissn).strip())
+            
+            # ---- OTHER FIELDS ----
+            title_value = row.get("title")
             journal.setTitle(str(title_value).strip() if self._has_value(title_value) else "")
-            
-            # Languages (may be in different columns)
-            language_value = row.get('language') if 'language' in row else None
-            languages: List[str] = []
+
+            language_value = row.get("language")
             if self._has_value(language_value):
-                languages = [str(language_value).strip()]
-            journal.setLanguages(languages)
-            
-            publisher_value = row.get('publisher')
+                journal.setLanguages([str(language_value).strip()])
+            else:
+                journal.setLanguages([])
+
+            publisher_value = row.get("publisher")
             journal.setPublisher(str(publisher_value).strip() if self._has_value(publisher_value) else None)
-            
-            seal_value = row.get('seal')
+
+            seal_value = row.get("seal")
             journal.setSeal(self._to_bool(seal_value) if self._has_value(seal_value) else False)
             
-            licence_value = row.get('licence')
+            licence_value = row.get("licence")
             journal.setLicence(str(licence_value).strip() if self._has_value(licence_value) else "")
-            
-            apc_value = row.get('apc')
+
+            apc_value = row.get("apc")
             journal.setAPC(self._to_bool(apc_value) if self._has_value(apc_value) else False)
+            
             
             return journal
             
